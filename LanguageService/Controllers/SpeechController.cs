@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using LanguageService.Services.Speech;
-using LanguageService.Exceptions;
 
 namespace LanguageService.Controllers;
 
@@ -15,16 +14,9 @@ public class SpeechController : ControllerBase
         this.service = service;
     }
 
-    [HttpPost("recognize")]
-    public async Task<IActionResult> RecognizeSpeechFromAudio(IFormFile audio)
+    [HttpPost("recognize/{language}")]
+    public async Task<IActionResult> RecognizeSpeechFromAudio(string language, IFormFile audio)
     {
-        if (audio == null || audio.Length == 0)
-        {
-            throw new InvalidAudioSource();
-        }
-
-        var result = await service.RecognizeFromAudio(audio);
-
-        return Ok(result);
+        return Ok(await service.RecognizeFromAudio(audio, language));
     }
 }

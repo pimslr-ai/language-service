@@ -2,14 +2,14 @@
 
 public abstract class HttpException : Exception
 {
+    public readonly int StatusCode;
     public new readonly string? Message;
     public readonly string? FriendlyMessage;
-    public readonly int StatusCode;
 
-    protected HttpException(int statusCode, string message = "", string friendlyMessage = "") 
+    protected HttpException(int statusCode, string? message = null, string? friendlyMessage = null) 
     {
-        Message = message;
         StatusCode = statusCode;
+        Message = message;
         FriendlyMessage = friendlyMessage;
     }
 }

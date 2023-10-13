@@ -4,5 +4,5 @@ namespace LanguageService.Services.Speech;
 
 public interface ISpeechToTextService
 {
-    Task<RecognizeResponse> RecognizeFromAudio(IFormFile audioFile);
+    Task<RecognizeResponse> RecognizeFromAudio(IFormFile data, string language);
 }
