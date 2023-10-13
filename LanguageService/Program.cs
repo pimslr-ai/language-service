@@ -1,11 +1,11 @@
 using System.Text.Json.Serialization;
+using Google.Cloud.Speech.V1;
 using LanguageService.Middlewares;
-using LanguageService.Repositories.Connection;
-using LanguageService.Repositories.Employees;
-using LanguageService.Services.Employees;
+using LanguageService.Services.Speech;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Misc
 builder.Services.AddControllers().AddJsonOptions(opts =>
 {
     var enumConverter = new JsonStringEnumConverter();
@@ -13,9 +13,19 @@ builder.Services.AddControllers().AddJsonOptions(opts =>
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
-builder.Services.AddSingleton<IEmployeeRepository>(_ => new EmployeeRepository(ConnectionFactory.Of(builder.Configuration["ConnectionStrings:Employees"])));
+// Google Cloud - Speech-To-Text
+builder.Services.AddScoped(_ =>
+{
+    var clientBuilder = new SpeechClientBuilder
+    {
+        CredentialsPath = builder.Configuration["GoogleCloud:Credentials"]
+    };
+    return clientBuilder.Build();
+});
+
+// Services
+builder.Services.AddScoped<ISpeechToTextService, SpeechToTextService>();
 
 var app = builder.Build();
 
