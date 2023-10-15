@@ -7,7 +7,7 @@ on:
 
 env:
   REGISTRY: docker.pkg.github.com
-  IMAGE_NAME: language-service
+  IMAGE_NAME: pimslr-ai/language-service
   REPO_OWNER: pimslr-ai
   TAG: latest
 
