@@ -14,9 +14,6 @@ RUN dotnet build "LanguageService.csproj" -c Release -o /app/build
 FROM build AS publish
 RUN dotnet publish "LanguageService.csproj" -c Release -o /app/publish
 
-# Add a COPY command to copy the credentials.json file
-COPY credentials.json /app
-
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .

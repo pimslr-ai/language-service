@@ -15,14 +15,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Google Cloud - Speech-To-Text
-builder.Services.AddScoped(_ =>
-{
-    var clientBuilder = new SpeechClientBuilder
-    {
-        CredentialsPath = builder.Configuration["GoogleCloud:Credentials"]
-    };
-    return clientBuilder.Build();
-});
+builder.Services.AddScoped(_ => SpeechClient.Create());
 
 // Services
 builder.Services.AddScoped<ISpeechToTextService, SpeechToTextService>();
