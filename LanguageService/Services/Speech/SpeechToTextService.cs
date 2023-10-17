@@ -1,8 +1,8 @@
-using Google.Cloud.Speech.V1;
+using Google.Cloud.Speech.V1P1Beta1;
 using Google.Protobuf;
 using LanguageService.Exceptions;
 using System.Globalization;
-using static Google.Cloud.Speech.V1.RecognitionConfig.Types;
+using static Google.Cloud.Speech.V1P1Beta1.RecognitionConfig.Types;
 
 namespace LanguageService.Services.Speech;
 
@@ -35,9 +35,9 @@ public class SpeechToTextService : ISpeechToTextService
 
         var configuration = new RecognitionConfig
         {
-            Encoding                = AudioEncoding.Linear16,
-            SampleRateHertz         = 16_000,
             LanguageCode            = language,
+            Encoding                = AudioEncoding.Mp3,
+            SampleRateHertz         = 44_100,
             EnableWordConfidence    = true,
             EnableWordTimeOffsets   = true,
         };

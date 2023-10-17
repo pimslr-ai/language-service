@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using Google.Cloud.Speech.V1;
+using Google.Cloud.Speech.V1P1Beta1;
 using LanguageService.Middlewares;
 using LanguageService.Services.Speech;
 
