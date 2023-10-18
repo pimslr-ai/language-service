@@ -17,11 +17,11 @@ public class SpeechToTextService : ISpeechToTextService
 
     public async Task<RecognizeResponse> RecognizeFromAudio(IFormFile file, string language = "en-US")
     {
-        using var data = file.OpenReadStream();
+        await using var data = file.OpenReadStream();
         return await RecognizeFromAudio(data, language);
     }
 
-    public async Task<RecognizeResponse> RecognizeFromAudio(Stream data, string language)
+    private async Task<RecognizeResponse> RecognizeFromAudio(Stream data, string language)
     {
         if (!IsValidLanguageCode(language))
         {
@@ -44,7 +44,7 @@ public class SpeechToTextService : ISpeechToTextService
 
         var audio = new RecognitionAudio
         {
-            Content = ByteString.FromStream(data),
+            Content = await ByteString.FromStreamAsync(data),
         };
 
         var request = new RecognizeRequest
@@ -55,8 +55,8 @@ public class SpeechToTextService : ISpeechToTextService
 
         return await client.RecognizeAsync(request);
     }
-   
-    public static bool IsValidLanguageCode(string code)
+
+    private static bool IsValidLanguageCode(string code)
     {
         return CultureInfo.GetCultures(CultureTypes.AllCultures).Any(culture => culture.Name ==code);
     }
