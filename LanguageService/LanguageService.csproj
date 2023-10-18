@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Google.Cloud.Speech.V1" Version="3.4.0" />
+        <PackageReference Include="Google.Cloud.Speech.V1P1Beta1" Version="3.0.0-beta05" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     </ItemGroup>
 
