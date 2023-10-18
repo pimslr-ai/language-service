@@ -15,20 +15,14 @@ public class SpeechToTextService : ISpeechToTextService
         this.client = client;
     }
 
-    public async Task<RecognizeResponse> RecognizeFromAudio(IFormFile file, string language = "en-US")
-    {
-        await using var data = file.OpenReadStream();
-        return await RecognizeFromAudio(data, language);
-    }
-
-    private async Task<RecognizeResponse> RecognizeFromAudio(Stream data, string language)
+    public async Task<RecognizeResponse> RecognizeFromAudio(string language, string base64)
     {
         if (!IsValidLanguageCode(language))
         {
             throw new InvalidLanguageCode(language);
         }
 
-        if (data == null || data.Length == 0)
+        if (string.IsNullOrEmpty(base64))
         {
             throw new InvalidAudioSource();
         }
@@ -44,7 +38,7 @@ public class SpeechToTextService : ISpeechToTextService
 
         var audio = new RecognitionAudio
         {
-            Content = await ByteString.FromStreamAsync(data),
+            Content = ByteString.FromBase64(base64),
         };
 
         var request = new RecognizeRequest

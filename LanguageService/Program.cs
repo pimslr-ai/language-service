@@ -2,14 +2,15 @@ using System.Text.Json.Serialization;
 using Google.Cloud.Speech.V1P1Beta1;
 using LanguageService.Middlewares;
 using LanguageService.Services.Speech;
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Misc
-builder.Services.AddControllers().AddJsonOptions(opts =>
+builder.Services.AddControllers().AddJsonOptions(options =>
 {
     var enumConverter = new JsonStringEnumConverter();
-    opts.JsonSerializerOptions.Converters.Add(enumConverter);
+    options.JsonSerializerOptions.Converters.Add(enumConverter);
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
