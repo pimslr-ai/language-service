@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 using Google.Cloud.Speech.V1P1Beta1;
 using LanguageService.Middlewares;
 using LanguageService.Services.Speech;
-using Microsoft.AspNetCore.Http.Features;
+using OpenAI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +17,9 @@ builder.Services.AddSwaggerGen();
 
 // Google Cloud - Speech-To-Text
 builder.Services.AddScoped(_ => SpeechClient.Create());
+
+// OpenAI
+builder.Services.AddOpenAIService(settings => { settings.ApiKey = builder.Configuration["OpenAI:ApiKey"]; });
 
 // Services
 builder.Services.AddScoped<ISpeechToTextService, SpeechToTextService>();
