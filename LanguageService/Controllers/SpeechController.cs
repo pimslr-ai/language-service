@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using LanguageService.Services.Speech;
+using LanguageService.Services.TextToSpeech;
 
 namespace LanguageService.Controllers;
 
@@ -7,18 +8,28 @@ namespace LanguageService.Controllers;
 [Route("speech")]
 public class SpeechController : ControllerBase
 {
-    private readonly ISpeechToTextService service;
+    private readonly ISpeechToTextService speechToText;
+    private readonly ITextToSpeechService textToSpeech;
 
-    public SpeechController(ISpeechToTextService service)
+    public SpeechController(ISpeechToTextService speechToText, ITextToSpeechService textToSpeech)
     {
-        this.service = service ?? throw new ArgumentNullException(nameof(service));
+        this.speechToText = speechToText ?? throw new ArgumentNullException(nameof(speechToText));
+        this.textToSpeech = textToSpeech ?? throw new ArgumentNullException(nameof(textToSpeech));
     }
 
     [HttpPost("recognize/{language}")]
-    public async Task<IActionResult> RecognizeSpeechFromAudio(string language, [FromBody] Body body)
+    public async Task<IActionResult> RecognizeSpeechFromAudio(string language, [FromBody] AudioBody? body)
     {
-        return Ok(await service.RecognizeFromAudio(language, body.Audio));
+        return Ok(await speechToText.RecognizeFromAudio(language, body.Audio));
+    }
+
+    [HttpPost("generate/{language}")]
+    public async Task<IActionResult> GenerateSpeechFromText(string language, [FromBody] TextBody? body)
+    {
+        return Ok(await textToSpeech.GenerateFromText(language, body.Text));
     }
 }
 
-public record Body(string Audio);
+public record AudioBody(string Audio);
+
+public record TextBody(string Text);
