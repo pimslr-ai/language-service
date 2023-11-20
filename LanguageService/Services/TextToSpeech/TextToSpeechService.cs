@@ -1,6 +1,5 @@
 ﻿using LanguageService.Exceptions;
 using LanguageService.Services.TextToSpeech.Models;
-using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using System.Text.Json;
 
@@ -45,7 +44,6 @@ public partial class TextToSpeechService : ITextToSpeechService
         {
             Voice = voice.Name,
             Language = voice.LanguageCode,
-            LanguageCode = voice.LanguageCode,
             Text = text,
             Audio = base64,
         };
