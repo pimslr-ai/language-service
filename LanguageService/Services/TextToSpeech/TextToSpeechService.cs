@@ -63,6 +63,8 @@ public partial class TextToSpeechService : ITextToSpeechService
         var json = await response.Content.ReadAsStringAsync();
         var voices = JsonSerializer.Deserialize<List<Voice>>(json);
 
-        return voices?.FirstOrDefault(l => l.LanguageCode == languageCode);
+        var candidates = voices?.Where(l => l.LanguageCode == languageCode);
+        
+        return candidates?.OrderBy(x => Guid.NewGuid()).FirstOrDefault();
     }
 }
