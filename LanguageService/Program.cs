@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Google.Cloud.Speech.V1P1Beta1;
 using LanguageService.Middlewares;
+using LanguageService.Services.Assessement;
 using LanguageService.Services.Speech;
 using LanguageService.Services.TextToSpeech;
 using OpenAI.Extensions;
@@ -12,7 +13,6 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     var enumConverter = new JsonStringEnumConverter();
     options.JsonSerializerOptions.Converters.Add(enumConverter);
-    options.AllowInputFormatterExceptionMessages = false;
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -26,6 +26,9 @@ builder.Services.AddOpenAIService(settings => { settings.ApiKey = builder.Config
 
 // Narakeet - Text-To-Speech
 builder.Services.AddScoped<ITextToSpeechService>(_ => new TextToSpeechService(builder.Configuration["Narakeet:ApiKey"]));
+
+// Azure - Pronunciation Assessement
+builder.Services.AddScoped<IPronunciationService>(_ => new PronunciationService(builder.Configuration["Azure:Key"], builder.Configuration["Azure:Region"]));
 
 var app = builder.Build();
 

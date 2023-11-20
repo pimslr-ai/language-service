@@ -7,7 +7,7 @@ namespace LanguageService.Services.TextToSpeech;
 
 public partial class TextToSpeechService : ITextToSpeechService
 {
-    private static readonly string generationUrl = "https://api.narakeet.com/text-to-speech/m4a";
+    private static readonly string generationUrl = "https://api.narakeet.com/text-to-speech/";
     private static readonly string voicesUrl = "https://api.narakeet.com/voices";
     private readonly HttpClient client = new();
 
@@ -17,8 +17,13 @@ public partial class TextToSpeechService : ITextToSpeechService
         client.DefaultRequestHeaders.Add("accept", "application/octet-stream");
     }
 
-    public async Task<AudioRecord> GenerateFromText(string language, string text)
+    public async Task<AudioRecord> GenerateFromText(string language, string text, string format)
     {
+        if (string.IsNullOrWhiteSpace(format) || !new[] { "m4a", "wav", "mp3" }.Contains(format))
+        {
+            throw new InvalidFileFormat();
+        }
+
         var voice = await GetVoiceByLanguage(language);
 
         if (voice == null)
@@ -27,7 +32,7 @@ public partial class TextToSpeechService : ITextToSpeechService
         }
         
         var content = new StringContent(text, Encoding.UTF8, "text/plain");
-        var url = generationUrl + $"?voice={Uri.EscapeDataString(voice.Name!)}";
+        var url = generationUrl + format + $"?voice={Uri.EscapeDataString(voice.Name!)}";
         var response = await client.PostAsync(url, content);
 
         if (!response.IsSuccessStatusCode)
@@ -65,6 +70,6 @@ public partial class TextToSpeechService : ITextToSpeechService
 
         var candidates = voices?.Where(l => l.LanguageCode == languageCode);
         
-        return candidates?.OrderBy(x => Guid.NewGuid()).FirstOrDefault();
+        return candidates?.OrderBy(_ => Guid.NewGuid()).FirstOrDefault();
     }
 }

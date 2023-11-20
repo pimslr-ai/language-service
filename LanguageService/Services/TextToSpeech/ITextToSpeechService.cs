@@ -3,5 +3,5 @@ namespace LanguageService.Services.TextToSpeech;
 
 public interface ITextToSpeechService
 {
-    Task<AudioRecord> GenerateFromText(string language, string text);
+    Task<AudioRecord> GenerateFromText(string language, string text, string format);
 }
