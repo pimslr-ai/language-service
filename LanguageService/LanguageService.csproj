@@ -7,9 +7,13 @@
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
+    <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
     <ItemGroup>
         <PackageReference Include="Betalgo.OpenAI" Version="7.4.0" />
         <PackageReference Include="Google.Cloud.Speech.V1P1Beta1" Version="3.0.0-beta05" />
+        <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.33.0" />
+        <PackageReference Include="NAudio" Version="2.2.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     </ItemGroup>
 
@@ -17,6 +21,10 @@
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Services\Assessement\Models\" />
     </ItemGroup>
 
 </Project>
