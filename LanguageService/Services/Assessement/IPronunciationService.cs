@@ -1,7 +1,8 @@
-﻿using LanguageService.Services.Assessement.Models;
+﻿using Microsoft.CognitiveServices.Speech.PronunciationAssessment;
+
 namespace LanguageService.Services.Assessement;
 
 public interface IPronunciationService
 {
-    Task<PronunciationAssessment> AssessPronunciationFromAudio(string language, string reference, string base64);
+    Task<PronunciationAssessment> AssessSpeechFromAudio(string language, string reference, string base64);
 }

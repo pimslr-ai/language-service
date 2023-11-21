@@ -1,7 +1,6 @@
-﻿using LanguageService.Exceptions;
-using LanguageService.Services.Assessement.Models;
-using Newtonsoft.Json;
-using System.Text;
+﻿using Microsoft.CognitiveServices.Speech.PronunciationAssessment;
+using Microsoft.CognitiveServices.Speech.Audio;
+using Microsoft.CognitiveServices.Speech;
 
 namespace LanguageService.Services.Assessement;
 
@@ -16,46 +15,84 @@ public class PronunciationService : IPronunciationService
         this.azureRegion = azureRegion;
     }
 
-    public async Task<PronunciationAssessment> AssessPronunciationFromAudio(string language, string reference, string base64)
+    public async Task<PronunciationAssessmentResult> AssessSpeechFromAudio(string language, string reference, string base64)
     {
-        var accessToken = await GetAccessToken(azureKey, azureRegion);
+        var configuration = SpeechConfig.FromSubscription(azureKey, azureRegion);
+        configuration.RequestWordLevelTimestamps();
 
-        var apiUrl = $"https://{azureRegion}.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1";
+        using var audio = AudioConfig.FromWavFileInput(@"C:\Users\greff\Downloads\download.wav");
 
-        var pronunciationParams = new
-        {
-            ReferenceText               = reference,
-            GradingSystem               = "HundredMark",
-            Dimension                   = "Comprehensive",
-            EnableProsodyAssessment     = true,
-        };
+        using var recognizer = new SpeechRecognizer(configuration, language, audio);
 
-        var jsonParams = JsonConvert.SerializeObject(pronunciationParams);
-        var base64Params = Convert.ToBase64String(Encoding.UTF8.GetBytes(jsonParams));
+        var pronunciation = new PronunciationAssessmentConfig(reference, GradingSystem.HundredMark, Granularity.Phoneme, true);
+        pronunciation.EnableProsodyAssessment();
 
-        var content = new StringContent(base64, Encoding.UTF8);
+        pronunciation.ApplyTo(recognizer);
 
-        using var client = new HttpClient();
-        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
-        client.DefaultRequestHeaders.Add("Pronunciation-Assessment", base64Params);
+        var result = await recognizer.RecognizeOnceAsync();
 
-        var response = await client.PostAsync($"{apiUrl}?language={language}&format=detailed", content);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new FailedPronunciationAssessement();
-        }
-
-        var json = await response.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<PronunciationAssessment>(json)!;
+        return PronunciationAssessmentResult.FromResult(result);
     }
+}
 
-    private static async Task<string> GetAccessToken(string azureKey, string azureRegion)
-    {
-        var fetchTokenUrl = $"https://{azureRegion}.api.cognitive.microsoft.com/sts/v1.0/issueToken";
-        using var client = new HttpClient();
-        client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", azureKey);
-        var result = await client.PostAsync(fetchTokenUrl, null);
-        return await result.Content.ReadAsStringAsync();
-    }
+public class PronunciationAssessment
+{
+    public string Id { get; set; }
+    public int RecognitionStatus { get; set; }
+    public long Offset { get; set; }
+    public long Duration { get; set; }
+    public string DisplayText { get; set; }
+    public List<NBestItem> NBest { get; set; }
+}
+
+public class NBestItem
+{
+    public double Confidence { get; set; }
+    public string Lexical { get; set; }
+    public string ITN { get; set; }
+    public string MaskedITN { get; set; }
+    public string Display { get; set; }
+    public PronunciationAssessment PronunciationAssessment { get; set; }
+    public List<WordItem> Words { get; set; }
+}
+
+public class PronunciationAssessment
+{
+    public double AccuracyScore { get; set; }
+    public double FluencyScore { get; set; }
+    public double CompletenessScore { get; set; }
+    public double PronScore { get; set; }
+}
+
+public class WordItem
+{
+    public string Word { get; set; }
+    public long Offset { get; set; }
+    public long Duration { get; set; }
+    public PronunciationAssessment PronunciationAssessment { get; set; }
+    public List<SyllableItem> Syllables { get; set; }
+    public List<PhonemeItem> Phonemes { get; set; }
+}
+
+public class SyllableItem
+{
+    public string Syllable { get; set; }
+    public PronunciationAssessment PronunciationAssessment { get; set; }
+    public long Offset { get; set; }
+    public long Duration { get; set; }
+}
+
+public class PhonemeItem
+{
+    public string Phoneme { get; set; }
+    public PronunciationAssessment PronunciationAssessment { get; set; }
+    public long Offset { get; set; }
+    public long Duration { get; set; }
+    public List<NBestPhonemeItem> NBestPhonemes { get; set; }
+}
+
+public class NBestPhonemeItem
+{
+    public string Phoneme { get; set; }
+    public double Score { get; set; }
 }

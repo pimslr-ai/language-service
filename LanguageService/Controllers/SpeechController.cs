@@ -35,7 +35,7 @@ public class SpeechController : ControllerBase
     [HttpPost("assess/{language}")]
     public async Task<IActionResult> AssessSpeechFromAudio(string language, [FromBody] AssessementBody? body)
     {
-        return Ok(await pronunciation.AssessPronunciationFromAudio(language, body.Reference, body.Audio));
+        return Ok(await pronunciation.AssessSpeechFromAudio(language, body.Reference, body.Audio));
     }
 }
 

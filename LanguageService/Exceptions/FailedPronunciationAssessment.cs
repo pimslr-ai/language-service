@@ -1,8 +1,8 @@
 ﻿namespace LanguageService.Exceptions;
 
-public class FailedPronunciationAssessement : HttpException
+public class FailedPronunciationAssessment : HttpException
 {
-    public FailedPronunciationAssessement() 
+    public FailedPronunciationAssessment() 
         : base(500, "Failed to perfrom pronunciation assessement", "Could not assess your pronunciation...")
     {
     }
