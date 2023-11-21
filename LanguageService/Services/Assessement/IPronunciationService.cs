@@ -4,5 +4,5 @@ namespace LanguageService.Services.Assessement;
 
 public interface IPronunciationService
 {
-    Task<PronunciationAssessment> AssessSpeechFromAudio(string language, string reference, string base64);
+    Task<PronunciationAssessmentResult> AssessSpeechFromAudio(string language, string reference, string base64);
 }

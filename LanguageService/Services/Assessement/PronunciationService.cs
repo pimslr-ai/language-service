@@ -20,79 +20,28 @@ public class PronunciationService : IPronunciationService
         var configuration = SpeechConfig.FromSubscription(azureKey, azureRegion);
         configuration.RequestWordLevelTimestamps();
 
-        using var audio = AudioConfig.FromWavFileInput(@"C:\Users\greff\Downloads\download.wav");
-
+        var input = AudioInputStream.CreatePushStream();
+        using var audio = AudioConfig.FromStreamInput(input);
         using var recognizer = new SpeechRecognizer(configuration, language, audio);
 
         var pronunciation = new PronunciationAssessmentConfig(reference, GradingSystem.HundredMark, Granularity.Phoneme, true);
         pronunciation.EnableProsodyAssessment();
-
         pronunciation.ApplyTo(recognizer);
+
+        byte[] audioBytes = Convert.FromBase64String(base64);
+        using var stream = new MemoryStream(audioBytes);
+
+        int bytesRead;
+        byte[] readBytes = new byte[1024];
+
+        do
+        {
+            bytesRead = stream.Read(readBytes, 0, readBytes.Length);
+            input.Write(readBytes, bytesRead);
+        } while (bytesRead > 0);
 
         var result = await recognizer.RecognizeOnceAsync();
 
         return PronunciationAssessmentResult.FromResult(result);
     }
-}
-
-public class PronunciationAssessment
-{
-    public string Id { get; set; }
-    public int RecognitionStatus { get; set; }
-    public long Offset { get; set; }
-    public long Duration { get; set; }
-    public string DisplayText { get; set; }
-    public List<NBestItem> NBest { get; set; }
-}
-
-public class NBestItem
-{
-    public double Confidence { get; set; }
-    public string Lexical { get; set; }
-    public string ITN { get; set; }
-    public string MaskedITN { get; set; }
-    public string Display { get; set; }
-    public PronunciationAssessment PronunciationAssessment { get; set; }
-    public List<WordItem> Words { get; set; }
-}
-
-public class PronunciationAssessment
-{
-    public double AccuracyScore { get; set; }
-    public double FluencyScore { get; set; }
-    public double CompletenessScore { get; set; }
-    public double PronScore { get; set; }
-}
-
-public class WordItem
-{
-    public string Word { get; set; }
-    public long Offset { get; set; }
-    public long Duration { get; set; }
-    public PronunciationAssessment PronunciationAssessment { get; set; }
-    public List<SyllableItem> Syllables { get; set; }
-    public List<PhonemeItem> Phonemes { get; set; }
-}
-
-public class SyllableItem
-{
-    public string Syllable { get; set; }
-    public PronunciationAssessment PronunciationAssessment { get; set; }
-    public long Offset { get; set; }
-    public long Duration { get; set; }
-}
-
-public class PhonemeItem
-{
-    public string Phoneme { get; set; }
-    public PronunciationAssessment PronunciationAssessment { get; set; }
-    public long Offset { get; set; }
-    public long Duration { get; set; }
-    public List<NBestPhonemeItem> NBestPhonemes { get; set; }
-}
-
-public class NBestPhonemeItem
-{
-    public string Phoneme { get; set; }
-    public double Score { get; set; }
 }
