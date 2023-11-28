@@ -1,6 +1,7 @@
 ﻿using Microsoft.CognitiveServices.Speech.PronunciationAssessment;
 using Microsoft.CognitiveServices.Speech.Audio;
 using Microsoft.CognitiveServices.Speech;
+using System.Threading.Channels;
 
 namespace LanguageService.Services.Assessement;
 
@@ -17,30 +18,23 @@ public class PronunciationService : IPronunciationService
 
     public async Task<PronunciationAssessmentResult> AssessSpeechFromAudio(string language, string reference, string base64)
     {
+        byte[] bytes = Convert.FromBase64String(base64);
+        string filePath = Path.Combine(Directory.GetCurrentDirectory(), $"{Guid.NewGuid()}.wav");
+        File.WriteAllBytes(filePath, bytes);
+
         var configuration = SpeechConfig.FromSubscription(azureKey, azureRegion);
         configuration.RequestWordLevelTimestamps();
 
-        var input = AudioInputStream.CreatePushStream();
-        using var audio = AudioConfig.FromStreamInput(input);
+        using var audio = AudioConfig.FromWavFileInput(filePath);
         using var recognizer = new SpeechRecognizer(configuration, language, audio);
 
         var pronunciation = new PronunciationAssessmentConfig(reference, GradingSystem.HundredMark, Granularity.Phoneme, true);
         pronunciation.EnableProsodyAssessment();
         pronunciation.ApplyTo(recognizer);
 
-        byte[] audioBytes = Convert.FromBase64String(base64);
-        using var stream = new MemoryStream(audioBytes);
-
-        int bytesRead;
-        byte[] readBytes = new byte[1024];
-
-        do
-        {
-            bytesRead = stream.Read(readBytes, 0, readBytes.Length);
-            input.Write(readBytes, bytesRead);
-        } while (bytesRead > 0);
-
         var result = await recognizer.RecognizeOnceAsync();
+
+        File.Delete(filePath);
 
         return PronunciationAssessmentResult.FromResult(result);
     }
