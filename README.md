@@ -83,7 +83,7 @@ Example response body:
 
 > ⚠ This endpoint is no longer being used in place of the the pronuciation assessment capable endpoint
 
-This endpoint returns a speech transcript given some audio input as `base64` and language in the form of a code (ex: `en-US`, `ca-FR`, etc.) using the Google Cloud Speech-To-Text API. Please consult the [Google Cloud documentation](https://cloud.google.com/speech-to-text/docs/speech-to-text-supported-languages) for more information on the supported languages. Only base64 from *mp3* files are accepted by this enpoint.
+This endpoint returns a speech transcript given some audio input as base64 and language in the form of a code (ex: `en-US`, `ca-FR`, etc.) using the Google Cloud Speech-To-Text API. Please consult the [Google Cloud documentation](https://cloud.google.com/speech-to-text/docs/speech-to-text-supported-languages) for more information on the supported languages. Only base64 from *mp3* files are accepted by this enpoint.
 
 While this endpoint was replaced with the `/speech/assess/{language code}` endpoint, this endpoint was used to transcribe user pronunced audio and then used for assessing pronunciation.
 
