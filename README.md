@@ -21,6 +21,10 @@ Below is a diagram illustrating the interaction between the Language Service, th
 
 This service is hosted on a free tier of an EC2 instance on AWS, running as a container.
 
+# CICD
+
+This project does not features a partially automated CICD pipeline for deployements to AWS. Any commit to master (via PRs for example), an image is built for this project and stored in the Github organiztions registry. Please refer to [this action](https://github.com/pimslr-ai/language-service/blob/master/.github/workflows/image-push.yml) for more information. While a fully automated pipeline is possible to AWS, it is performed manually via the AWS console. 
+
 # Endpoints
 
 For the sake of showcase, all endpoints are freely accessible [here](http://pimslrai.greffchandler.net/swagger/index.html), though, this would not be the case in a production environment.
