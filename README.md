@@ -1,7 +1,7 @@
 <br />
 
 <p align="center"> 
-  <img src="https://github.com/pimslr-ai/language-service/assets/56337726/aa89fa00-8f50-45c0-9d64-6bfa9a6535fb" width="auto" height="200">
+  <img src="https://github.com/pimslr-ai/language-service/assets/56337726/5272bb5e-25e6-4096-af80-e97ba9434e5e" width="auto" height="200">
 </p>
 
 <br />
