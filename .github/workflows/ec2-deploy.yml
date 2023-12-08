@@ -1,0 +1,30 @@
+name: Deploy to EC2
+
+on:
+  release:
+    types:
+      - created
+
+env:
+  REGISTRY: docker.pkg.github.com
+  IMAGE_NAME: pimslr-ai/language-service
+  REPO_OWNER: pimslr-ai
+  TAG: latest
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH Into EC2 and Run Docker Commands
+        run: |
+          echo -e "${{ secrets.SSH_KEY }}" > key.pem
+          chmod 400 key.pem
+
+          # Run Docker commands on the EC2 instance within the SSH session
+          ssh -i key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} '
+            docker login ${{ env.REGISTRY }} -u greffgreff -p ${{ secrets.IMAGE_PULL_TOKEN }};
+            docker pull ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.IMAGE_NAME }}:${{ env.TAG }};
+            docker rm -f ${{ env.IMAGE_NAME }};
+            docker run -d --name tfs-service -p 80:80 -p 443:443 ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.IMAGE_NAME }}:${{ env.TAG }};
+          '
