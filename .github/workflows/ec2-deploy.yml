@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: SSH Into EC2 and Run Docker Commands
         run: |
-          echo -e "${{ secrets.SSH_KEY }}" > key.pem
+          echo -e "${{ secrets.EC2_KEY }}" > key.pem
           chmod 400 key.pem
 
           # Run Docker commands on the EC2 instance within the SSH session
