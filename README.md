@@ -23,7 +23,9 @@ This service is hosted on a free tier of an EC2 instance on AWS, running as a co
 
 # CICD
 
-This project does not features a partially automated CICD pipeline for deployements to AWS. Any commit to master (via PRs for example), an image is built for this project and stored in the Github organiztions registry. Please refer to [this action](https://github.com/pimslr-ai/language-service/blob/master/.github/workflows/image-push.yml) for more information. While a fully automated pipeline is possible to AWS, it is performed manually via the AWS console. 
+This project does not features a partially automated CICD pipeline for deployements to AWS. Any commit to master (via PRs for example), an image is built for this project and stored in the Github organiztions registry. Please refer to [this action](https://github.com/pimslr-ai/language-service/blob/master/.github/workflows/image-push.yml) for more information. WHen a new release is created via the Github dashboard, a new instance of the latest container is spun up on the AWS EC2 instance. Please refer to [this action](https://github.com/pimslr-ai/language-service/blob/master/.github/workflows/ec2-deploy.yml) for more information.
+
+> ⚠ As of writting, the EC2 instance deployment is currently out of service due to organisation migration.
 
 # Endpoints
 
